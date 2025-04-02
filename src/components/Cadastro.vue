@@ -76,8 +76,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { VAlert } from 'vuetify/components';
-
+import { register } from '../api/auth';
 
 const router = useRouter();
 const usuario = ref<string>('');
@@ -86,7 +85,7 @@ const confirmarSenha = ref<string>('');
 const alert = ref<boolean>(false);
 const alertMessage = ref<string>('');
 
-const handleRegister = () => {
+const handleRegister = async () => {
   if (usuario.value === '' && senha.value === '' && confirmarSenha.value === '') {
     alertMessage.value = 'Por favor, preencha o usuário e a senha.';
     showAlert();
@@ -103,8 +102,17 @@ const handleRegister = () => {
     alertMessage.value = 'As senhas não coincidem.';
     showAlert();
   } else {
-    alert.value = false; 
-    router.push('/login');
+    try {
+      await register(usuario.value, senha.value);
+      alertMessage.value = 'Cadastro realizado com sucesso!';
+      showAlert();
+      setTimeout(() => {
+        router.push('/login');
+      }, 3000);
+    } catch (error) {
+      alertMessage.value = error;
+      showAlert();
+    }
   }
 };
 

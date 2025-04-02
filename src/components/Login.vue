@@ -46,9 +46,9 @@
 </template>
 
 <script setup lang="ts">
-import { VAlert } from 'vuetify/components';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { login } from '@/api/auth'; // Importa o serviço de autenticação
 
 const router = useRouter();
 const usuario = ref<string>('');
@@ -56,22 +56,22 @@ const senha = ref<string>('');
 const alert = ref<boolean>(false);
 const alertMessage = ref<string>(''); 
 
-const handleLogin = () => {
+const handleLogin = async () => {
   if (usuario.value === '' && senha.value === '') {
     alertMessage.value = 'Por favor, preencha o usuário e a senha.';
     showAlert();
-  } else if (usuario.value === '') {
-    alertMessage.value = 'Por favor, preencha o usuário.';
+    return;
+  }
+
+  try {
+    const data = await login(usuario.value, senha.value); // Faz a requisição ao backend
+    console.log('Login bem-sucedido:', data);
+    router.push('/home'); // Redireciona para a página inicial
+  } catch (error) {
+    alertMessage.value = error; // Exibe a mensagem de erro
     showAlert();
-  } else if (senha.value === '') {
-    alertMessage.value = 'Por favor, preencha a senha.';
-    showAlert();
-  } else {
-    alert.value = false; 
-    router.push('/home');
   }
 };
-
 
 const showAlert = () => {
   alert.value = true;
