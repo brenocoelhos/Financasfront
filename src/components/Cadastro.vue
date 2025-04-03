@@ -1,4 +1,5 @@
 <template>
+  <v-card elevation="0" style="border-radius: 12px; background-color: #f5f5f5">
   <v-container class="d-flex justify-center align-center no-border" style="height: 100vh; background-color: #f5f5f5">
     <v-card class="pa-5" elevation="10" style="max-width: 400px; width: 100%; border-radius: 12px">
       <v-card-title class="text-h5 text-center mb-4" style="color: #1976d2">AppFinanças</v-card-title>
@@ -22,6 +23,7 @@
     :border="false" :color="'red'" :icon="'mdi-alert-circle'" :elevation="2">
     {{ alertMessage }}
   </v-alert>
+  </v-card>
 </template>
 
 <script setup lang="ts">
