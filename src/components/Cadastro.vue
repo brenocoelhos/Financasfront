@@ -39,33 +39,30 @@ const alert = ref<boolean>(false);
 const alertMessage = ref<string>('');
 
 const handleRegister = async () => {
-  if (usuario.value === '' && senha.value === '' && confirmarSenha.value === '') {
-    alertMessage.value = 'Por favor, preencha o usuário e a senha.';
+  const validations = [
+    { condition: usuario.value === '', message: 'Por favor, preencha o usuário.' },
+    { condition: senha.value === '', message: 'Por favor, preencha a senha.' },
+    { condition: confirmarSenha.value === '', message: 'Por favor, confirme a senha.' },
+    { condition: senha.value !== confirmarSenha.value, message: 'As senhas não coincidem.' },
+  ];
+
+  const failedValidation = validations.find(validation => validation.condition);
+  if (failedValidation) {
+    alertMessage.value = failedValidation.message;
     showAlert();
-  } else if (usuario.value === '') {
-    alertMessage.value = 'Por favor, preencha o usuário.';
+    return;
+  }
+
+  try {
+    await register(usuario.value, senha.value);
+    alertMessage.value = 'Cadastro realizado com sucesso!';
     showAlert();
-  } else if (senha.value === '') {
-    alertMessage.value = 'Por favor, preencha a senha.';
+    setTimeout(() => {
+      router.push('/login');
+    }, 3000);
+  } catch (error) {
+    alertMessage.value = String(error);
     showAlert();
-  } else if (confirmarSenha.value === '') {
-    alertMessage.value = 'Por favor, confirme a senha.';
-    showAlert();
-  } else if (senha.value !== confirmarSenha.value) {
-    alertMessage.value = 'As senhas não coincidem.';
-    showAlert();
-  } else {
-    try {
-      await register(usuario.value, senha.value);
-      alertMessage.value = 'Cadastro realizado com sucesso!';
-      showAlert();
-      setTimeout(() => {
-        router.push('/login');
-      }, 3000);
-    } catch (error) {
-      alertMessage.value = error;
-      showAlert();
-    }
   }
 };
 
@@ -75,7 +72,6 @@ const showAlert = () => {
     alert.value = false;
   }, 3000);
 };
-
 </script>
 
 
